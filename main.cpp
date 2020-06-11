@@ -1,9 +1,11 @@
 #include "mbed.h"
 
 #include "msg.h"
+#include "tasks.h"
 
 #include <map>
 
+Queue<message_t, 8> tasks[(int)taskId::LAST];
 MemoryPool<message_t, 8> mpool;
 
 Queue<message_t, 8> queue;
@@ -14,6 +16,8 @@ Thread ctlThread;
 #define RATE 250
 
 void ledControlTask(void) {
+
+    int iam = (int) taskId::LED_CTRL;
 
     bool runFlag = true;
     DigitalOut myLed(LED1);
@@ -76,7 +80,8 @@ int main() {
     ctlThread.start(control);
 
     while(1) {
-        Thread::wait(5);
+//        Thread::wait(5);
+        ThisThread::sleep_for(RATE);
     }
 }
 

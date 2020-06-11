@@ -17,9 +17,6 @@ enum class highLevelOperation {
 } ;
 
 typedef struct {
-// Sender
-    highLevelOperation cmd;
-
     char topic[MAX_TOPIC];
     char msg[MAX_MSG];
 } hl_message_t;
@@ -32,9 +29,6 @@ enum class lowLevelOperation {
 } ;
 
 typedef struct {
-// Sender
-    lowLevelOperation cmd;
-
     uint8_t selector;
     uint16_t deviceRegister;
     void *buffer;
@@ -42,6 +36,7 @@ typedef struct {
 } ll_message_t;
 
 typedef struct {
+// Sender
     msgType type;
     union {
         highLevelOperation hl_op; 
