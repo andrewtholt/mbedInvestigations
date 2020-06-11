@@ -85,6 +85,8 @@ int main() {
 //        Thread::wait(5);
         ThisThread::sleep_for(RATE);
     }
+    ledThread.join();
+    ctlThread.join();
 }
 
 
