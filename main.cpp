@@ -8,8 +8,6 @@
 Queue<message_t, 8> tasks[(int)taskId::LAST];
 MemoryPool<message_t, 8> mpool;
 
-// Queue<message_t, 8> queue;
-
 Thread ledThread;
 Thread ctlThread;
 
@@ -24,7 +22,6 @@ void ledControlTask(void) {
     DigitalOut myLed(LED1);
 
     while(runFlag) {
-//        osEvent evt = queue.get(osWaitForever);
         osEvent evt = tasks[iam].get(osWaitForever);
 
         if (evt.status == osEventMessage ) {
