@@ -8,7 +8,7 @@
 Queue<message_t, 8> tasks[(int)taskId::LAST];
 MemoryPool<message_t, 8> mpool;
 
-Queue<message_t, 8> queue;
+// Queue<message_t, 8> queue;
 
 Thread ledThread;
 Thread ctlThread;
@@ -18,12 +18,14 @@ Thread ctlThread;
 void ledControlTask(void) {
 
     int iam = (int) taskId::LED_CTRL;
+    Queue<message_t, 8> myQueue = tasks[iam];
 
     bool runFlag = true;
     DigitalOut myLed(LED1);
 
     while(runFlag) {
-        osEvent evt = queue.get(osWaitForever);
+//        osEvent evt = queue.get(osWaitForever);
+        osEvent evt = tasks[iam].get(osWaitForever);
 
         if (evt.status == osEventMessage ) {
             message_t *message = (message_t*)evt.value.p;
@@ -49,6 +51,9 @@ void control() {
     char *topic;
     char *msg;
 
+    int iam = (int) taskId::CTRL;
+    int dest = (int) taskId::LED_CTRL;
+
     while(1) {
         message_t *messageOn = mpool.alloc();
         message_t *messageOff = mpool.alloc();
@@ -58,7 +63,7 @@ void control() {
 
         strcpy(topic,(char *)"LED1");
         strcpy(msg,(char *)"OFF");
-        queue.put(messageOn);
+        tasks[dest].put(messageOn);
 
         ThisThread::sleep_for(RATE);
 
@@ -67,7 +72,7 @@ void control() {
 
         strcpy(topic,(char *)"LED1");
         strcpy(msg,(char *)"ON");
-        queue.put(messageOff);
+        tasks[dest].put(messageOff);
 
         ThisThread::sleep_for(RATE);
     }
