@@ -1,0 +1,5 @@
+mbed-os
+BUILD
+*.pyc
+.mbed
+.gdb_history
