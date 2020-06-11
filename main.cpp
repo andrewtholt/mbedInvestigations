@@ -81,12 +81,16 @@ int main() {
     ledThread.start(ledControlTask);
     ctlThread.start(control);
 
+    ledThread.join();
+    ctlThread.join();
+/*
     while(1) {
 //        Thread::wait(5);
         ThisThread::sleep_for(RATE);
     }
     ledThread.join();
     ctlThread.join();
+    */
 }
 
 
