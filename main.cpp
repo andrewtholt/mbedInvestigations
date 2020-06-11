@@ -4,8 +4,9 @@
 
 #include <map>
 
-MemoryPool<hl_message_t, 8> mpool;
-Queue<hl_message_t, 8> queue;
+MemoryPool<message_t, 8> mpool;
+
+Queue<message_t, 8> queue;
 
 Thread ledThread;
 Thread ctlThread;
@@ -21,12 +22,15 @@ void ledControlTask(void) {
         osEvent evt = queue.get(osWaitForever);
 
         if (evt.status == osEventMessage ) {
-            hl_message_t *message = (hl_message_t*)evt.value.p;
+            message_t *message = (message_t*)evt.value.p;
 
-            if(!strcmp(message->topic,"LED1")) {
-                if(!strcmp(message->msg,"ON")) {
+            char *topic = message->body.hl_body.topic;
+
+            if(!strcmp(topic,"LED1")) {
+                char *msg = message->body.hl_body.msg;
+                if(!strcmp(msg,"ON")) {
                     myLed=1;
-                } else if(!strcmp(message->msg,"OFF")) {
+                } else if(!strcmp(msg,"OFF")) {
                     myLed=0;
                 }
             }
@@ -38,18 +42,27 @@ void ledControlTask(void) {
 
 void control() {
 
-    while(1) {
-        hl_message_t *messageOn = mpool.alloc();
-        hl_message_t *messageOff = mpool.alloc();
+    char *topic;
+    char *msg;
 
-        strcpy(messageOn->topic,(char *)"LED1");
-        strcpy(messageOn->msg,(char *)"OFF");
+    while(1) {
+        message_t *messageOn = mpool.alloc();
+        message_t *messageOff = mpool.alloc();
+
+        topic = messageOn->body.hl_body.topic;
+        msg = messageOn->body.hl_body.msg;
+
+        strcpy(topic,(char *)"LED1");
+        strcpy(msg,(char *)"OFF");
         queue.put(messageOn);
 
         ThisThread::sleep_for(RATE);
 
-        strcpy(messageOff->topic,(char *)"LED1");
-        strcpy(messageOff->msg,(char *)"ON");
+        topic = messageOff->body.hl_body.topic;
+        msg = messageOff->body.hl_body.msg;
+
+        strcpy(topic,(char *)"LED1");
+        strcpy(msg,(char *)"ON");
         queue.put(messageOff);
 
         ThisThread::sleep_for(RATE);

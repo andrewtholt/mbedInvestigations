@@ -52,6 +52,6 @@ typedef struct {
         hl_message_t hl_body;
         ll_message_t ll_body;
     } body;
-} message;
+} message_t;
 
 
